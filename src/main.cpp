@@ -34,8 +34,8 @@ int Motor_links_A = 3;
 int Motor_links_B = 2;
 int Motor_rechts_A = 1;
 int Motor_rechts_B = 0;
-int sensor_right = 4;
-int sensor_left = 5;
+int sensor_right = 5;
+int sensor_left = 4;
 bool autopilot = false;
 
 
@@ -55,13 +55,13 @@ int readSensor(int sensor_right, int sensor_left) {
   Serial.println(sensor_left_value);
 
   if(sensor_right_value > 1000 && sensor_left_value > 1000) {
-    return 0;
-  } else if(sensor_right_value > 1000 && sensor_left_value < 1000) {
     return 1;
-  } else if(sensor_right_value < 1000 && sensor_left_value > 1000) {
+  } else if(sensor_right_value > 1000 && sensor_left_value < 1000) {
     return 2;
-  } else if(sensor_right_value < 1000 && sensor_left_value < 1000) {
+  } else if(sensor_right_value < 1000 && sensor_left_value > 1000) {
     return 3;
+  } else if(sensor_right_value < 1000 && sensor_left_value < 1000) {
+    return 4;
   } else {
     return 0;
   }

@@ -1,6 +1,6 @@
 #include<Arduino.h>
 
-int veloctiy = 128;
+int veloctiy = 190;
 
 void motor_stop(int left_a, int left_b, int right_a, int right_b) {
   analogWrite(left_a, 0);
@@ -39,4 +39,8 @@ void set_pins(int left_a, int left_b, int right_a, int right_b) {
   pinMode(left_b, OUTPUT);
   pinMode(right_a, OUTPUT);
   pinMode(right_b, OUTPUT);
+  digitalWrite(left_a, HIGH);
+  digitalWrite(left_b, HIGH);
+  digitalWrite(right_a, HIGH);
+  digitalWrite(right_b, HIGH);
 }
