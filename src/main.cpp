@@ -34,8 +34,8 @@ int Motor_links_A = 3;
 int Motor_links_B = 2;
 int Motor_rechts_A = 1;
 int Motor_rechts_B = 0;
-int Sensor_a = 4;
-int Sensor_b = 5;
+int sensor_right = 4;
+int sensor_left = 5;
 bool autopilot = false;
 
 
@@ -47,20 +47,20 @@ void setup() {
   set_pins(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
 }
 
-int readSensor(int sensor_a, int sensor_b) {
+int readSensor(int sensor_right, int sensor_left) {
   delay(100);
-  int sensor_a_value = analogRead(sensor_a);
-  int sensor_b_value = analogRead(sensor_b);
-  Serial.println(sensor_a_value);
-  Serial.println(sensor_b_value);
+  int sensor_right_value = analogRead(sensor_right);
+  int sensor_left_value = analogRead(sensor_left);
+  Serial.println(sensor_right_value);
+  Serial.println(sensor_left_value);
 
-  if(sensor_a_value > 1000 && sensor_b_value > 1000) {
+  if(sensor_right_value > 1000 && sensor_left_value > 1000) {
     return 0;
-  } else if(sensor_a_value > 1000 && sensor_b_value < 1000) {
+  } else if(sensor_right_value > 1000 && sensor_left_value < 1000) {
     return 1;
-  } else if(sensor_a_value < 1000 && sensor_b_value > 1000) {
+  } else if(sensor_right_value < 1000 && sensor_left_value > 1000) {
     return 2;
-  } else if(sensor_a_value < 1000 && sensor_b_value < 1000) {
+  } else if(sensor_right_value < 1000 && sensor_left_value < 1000) {
     return 3;
   } else {
     return 0;
@@ -69,7 +69,7 @@ int readSensor(int sensor_a, int sensor_b) {
 
 void loop() {
   RemoteXY_Handler ();
-  switch (readSensor(Sensor_a, Sensor_b)) {
+  switch (readSensor(sensor_right, sensor_left)) {
     case 1:
       motor_forward(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
       break;
