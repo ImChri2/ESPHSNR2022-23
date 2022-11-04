@@ -38,16 +38,36 @@ int Sensor_a = 4;
 int Sensor_b = 5;
 bool autopilot = false;
 
+
+
 void setup() {
-  // put your setup code here, to run once:
   RemoteXY_Init ();
   Serial.begin(9600);
 
   set_pins(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
 }
 
+int readSensor(int sensor_a, int sensor_b) {
+  delay(100);
+  int sensor_a_value = analogRead(sensor_a);
+  int sensor_b_value = analogRead(sensor_b);
+  Serial.println(sensor_a_value);
+  Serial.println(sensor_b_value);
+
+  if(sensor_a_value > 1000 && sensor_b_value > 1000) {
+    return 0;
+  } else if(sensor_a_value > 1000 && sensor_b_value < 1000) {
+    return 1;
+  } else if(sensor_a_value < 1000 && sensor_b_value > 1000) {
+    return 2;
+  } else if(sensor_a_value < 1000 && sensor_b_value < 1000) {
+    return 3;
+  } else {
+    return 0;
+  }
+}
+
 void loop() {
-  // put your main code here, to run repeatedly:
   RemoteXY_Handler ();
   switch (readSensor(Sensor_a, Sensor_b)) {
     case 1:
@@ -72,24 +92,5 @@ void set_control_mode() {
     autopilot = true;
   } else {
     autopilot = false;
-  }
-}
-
-int readSensor(int sensor_a, int sensor_b) {
-  delay(100);
-  int sensor_a_value = analogRead(sensor_a);
-  int sensor_b_value = analogRead(sensor_b);
-  Serial.println(sensor_a_value);
-  Serial.println(sensor_b_value);
-
-  // Pololu QTR-1A Reflectance Sensor
-  if(sensor_a_value > 1000 && sensor_b_value > 1000) {
-    return 0;
-  } else if(sensor_a_value > 1000 && sensor_b_value < 1000) {
-    return 1;
-  } else if(sensor_a_value < 1000 && sensor_b_value > 1000) {
-    return 2;
-  } else if(sensor_a_value < 1000 && sensor_b_value < 1000) {
-    return 3;
   }
 }
