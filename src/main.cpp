@@ -1,6 +1,6 @@
 #include <Arduino.h>
-#include <MotorControl.cpp>
-#include <Autopilot.cpp>
+#include "MotorControl.hpp"
+#include "Autopilot.cpp"
 
 #define REMOTEXY_MODE__ESP32CORE_BLE
 #include <BLEDevice.h>
@@ -40,7 +40,6 @@ void setup() {
   // put your setup code here, to run once:
   RemoteXY_Init ();
   Serial.begin(9600);
-
 
   set_pins(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
 }
