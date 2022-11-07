@@ -1,6 +1,6 @@
 # ESPHSNR2022-23
 ---
-<img src="pictures\Wall-e.jpg" />
+![image](https://user-images.githubusercontent.com/11671272/200411557-6a103327-a80d-4614-b723-df330567c8de.png)
 
 ---
 
