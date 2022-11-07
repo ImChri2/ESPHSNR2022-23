@@ -87,10 +87,11 @@ void loop() {
   };
 }
 
-void set_control_mode() {
+int set_control_mode() {
   if (RemoteXY.pushSwitch_Engine == 1) {
     autopilot = true;
   } else {
     autopilot = false;
   }
+  return autopilot;
 }
