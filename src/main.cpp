@@ -30,6 +30,7 @@ struct {
 } RemoteXY;
 #pragma pack(pop)
 
+//initialize the motor control and sensor
 int Motor_links_A = 3;
 int Motor_links_B = 2;
 int Motor_rechts_A = 1;
@@ -54,6 +55,7 @@ int readSensor(int sensor_right, int sensor_left) {
   Serial.println(sensor_right_value);
   Serial.println(sensor_left_value);
 
+  // if both sensors are on black
   if(sensor_right_value > 1000 && sensor_left_value > 1000) {
     return 1;
   } else if(sensor_right_value > 1000 && sensor_left_value < 1000) {
@@ -67,8 +69,10 @@ int readSensor(int sensor_right, int sensor_left) {
   }
 }
 
+
 void loop() {
   RemoteXY_Handler ();
+  // tells what the sensor is reading and what to do
   switch (readSensor(sensor_right, sensor_left)) {
     case 1:
       motor_forward(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
