@@ -1,42 +1,42 @@
 #include<Arduino.h>
 
-int veloctiy = 190;
+int velocity = 190;
 
 // Halte den Roboter an
 void motor_stop(int left_a, int left_b, int right_a, int right_b) {
-  analogWrite(left_a, 0);
-  analogWrite(left_b, 0);
-  analogWrite(right_a, 0);
-  analogWrite(right_b, 0);
+  analogWrite(left_a, LOW);
+  analogWrite(left_b, LOW);
+  analogWrite(right_a, LOW);
+  analogWrite(right_b, LOW);
 }
 
 // Bewege den Roboter nach links
 void motor_left(int left_a, int left_b, int right_a, int right_b) {
-  analogWrite(left_a, 0);
-  analogWrite(left_b, veloctiy);
-  analogWrite(right_a, veloctiy);
-  analogWrite(right_b, 0);
+  analogWrite(left_a, LOW);
+  analogWrite(left_b, velocity);
+  analogWrite(right_a, LOW);
+  analogWrite(right_b, velocity);
 }
 
 // Bewege den Roboter nach rechts
 void motor_right(int left_a, int left_b, int right_a, int right_b) {
-  analogWrite(left_a, veloctiy);
-  analogWrite(left_b, 0);
-  analogWrite(right_a, 0);
-  analogWrite(right_b, veloctiy);
+  analogWrite(left_a, velocity);
+  analogWrite(left_b, LOW);
+  analogWrite(right_a, velocity);
+  analogWrite(right_b, LOW);
 }
 
 // Bewege den Roboter nach vorne
 void motor_forward(int left_a, int left_b, int right_a, int right_b) {
-  analogWrite(left_a, veloctiy);
-  analogWrite(left_b, 0);
-  analogWrite(right_a, veloctiy);
-  analogWrite(right_b, 0);
+  analogWrite(left_a, velocity);            //LEFT_motor takes reverse inputs
+  analogWrite(left_b, LOW);                 //Truth table flipped for left_a/b
+  analogWrite(right_a, LOW);
+  analogWrite(right_b, velocity);
 }
 
 // Setze die Geschwindigkeit
-void set_veloctiy(int value) {
-  veloctiy = value;
+void set_velocity(int value) {
+  velocity = value;
 }
 
 // Einlesen der Pins für die Motoren
