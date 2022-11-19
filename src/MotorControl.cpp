@@ -1,6 +1,6 @@
 #include<Arduino.h>
 
-int velocity = 190;
+int velocity = 235;
 
 // Halte den Roboter an
 void motor_stop(int left_a, int left_b, int right_a, int right_b) {

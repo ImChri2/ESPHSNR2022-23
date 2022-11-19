@@ -39,17 +39,23 @@ int sensor_right = 5;
 int sensor_left = 4;
 bool autopilot = false;
 
+int red_lamp = 6;
+int green_lamp = 7;
+
 
 
 void setup() {
   RemoteXY_Init ();
-  Serial.begin(9600);
+  Serial.begin(250000);
+
+  pinMode(red_lamp, OUTPUT);
+  pinMode(green_lamp, OUTPUT);
 
   set_pins(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
 }
 
 int readSensor(int sensor_right, int sensor_left) {
-  delay(100);
+  //delay(100);
   int sensor_right_value = analogRead(sensor_right);
   int sensor_left_value = analogRead(sensor_left);
   Serial.println(sensor_right_value);
@@ -76,15 +82,23 @@ void loop() {
   switch (readSensor(sensor_right, sensor_left)) {
     case 1:
       motor_forward(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
+      digitalWrite(red_lamp, HIGH);
+      digitalWrite(green_lamp, HIGH);
       break;
     case 2:
       motor_left(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
+      digitalWrite(red_lamp, HIGH);
+      digitalWrite(green_lamp, LOW);
       break;
     case 3:
       motor_right(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
+      digitalWrite(red_lamp, LOW);
+      digitalWrite(green_lamp, HIGH);
       break;
     case 4:
       motor_stop(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
+      digitalWrite(red_lamp, LOW);
+      digitalWrite(green_lamp, LOW);
       break;
     default:
       break;
