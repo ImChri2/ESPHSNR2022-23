@@ -34,6 +34,13 @@ void motor_forward(int left_a, int left_b, int right_a, int right_b) {
   analogWrite(right_b, velocity);
 }
 
+void motor_reverse(int left_a, int left_b, int right_a, int right_b) {
+  analogWrite(left_a, LOW);            //LEFT_motor takes reverse inputs
+  analogWrite(left_b, velocity);                 //Truth table flipped for left_a/b
+  analogWrite(right_a, velocity);
+  analogWrite(right_b, LOW);
+}
+
 // Setze die Geschwindigkeit
 void set_velocity(int value) {
   velocity = value;

@@ -96,7 +96,7 @@ void loop() {
       digitalWrite(green_lamp, HIGH);
       break;
     case 4:
-      motor_stop(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
+      motor_reverse(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
       digitalWrite(red_lamp, LOW);
       digitalWrite(green_lamp, LOW);
       break;
