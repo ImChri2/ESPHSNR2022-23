@@ -6,8 +6,8 @@
 #include <BLEDevice.h>
 #include <RemoteXY.h>
 // RemoteXY connection settings
-#define REMOTEXY_BLUETOOTH_NAME "ESP2022_Slider"
-#define REMOTEXY_ACCESS_PASSWORD "esp2022"
+#define REMOTEXY_BLUETOOTH_NAME "Ball-E connect"
+#define REMOTEXY_ACCESS_PASSWORD "#DasBesteEsp2022!"
 // RemoteXY configurate
 #pragma pack(push, 1)
 uint8_t RemoteXY_CONF[] = // 94 bytes
@@ -19,17 +19,25 @@ uint8_t RemoteXY_CONF[] = // 94 bytes
 
 // this structure defines all the variables and events of your control interface
 struct {
- // input variables
- uint8_t switch_1; // =1 if switch ON and =0 if OFF
- uint8_t pushSwitch_Engine; // =1 if state is ON, else =0
- uint8_t switch_2; // =1 if switch ON and =0 if OFF
- int8_t slider_links; // =-100..100 slider position
- int8_t slider_rechts; // =-100..100 slider position
- // other variable
- uint8_t connect_flag; // =1 if wire connected, else =0
+
+    // input variables
+  uint8_t switch_1; // =1 if switch ON and =0 if OFF 
+  int8_t joystick_1_x; // from -100 to 100  
+  int8_t joystick_1_y; // from -100 to 100  
+  uint8_t pushSwitch_1; // =1 if state is ON, else =0 
+  uint8_t switch_2; // =1 if switch ON and =0 if OFF 
+
+    // output variables
+  char text_1[11];  // string UTF8 end zero 
+
+    // other variable
+  uint8_t connect_flag;  // =1 if wire connected, else =0 
+
 } RemoteXY;
 #pragma pack(pop)
 
+#define PIN_PUSHSWITCH_1 10
+#define PIN_SWITCH_2 9
 //initialize the motor control and sensor
 int Motor_links_A = 3;
 int Motor_links_B = 2;
@@ -50,6 +58,10 @@ void setup() {
 
   pinMode(red_lamp, OUTPUT);
   pinMode(green_lamp, OUTPUT);
+
+  pinMode (PIN_PUSHSWITCH_1, OUTPUT);
+  pinMode (PIN_SWITCH_2, OUTPUT);
+  
 
   set_pins(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
 }
@@ -79,37 +91,59 @@ int readSensor(int sensor_right, int sensor_left) {
 void loop() {
   RemoteXY_Handler ();
   // tells what the sensor is reading and what to do
-  switch (readSensor(sensor_right, sensor_left)) {
-    case 1:
-      motor_forward(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
-      digitalWrite(red_lamp, HIGH);
-      digitalWrite(green_lamp, HIGH);
-      break;
-    case 2:
-      motor_left(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
-      digitalWrite(red_lamp, HIGH);
-      digitalWrite(green_lamp, LOW);
-      break;
-    case 3:
-      motor_right(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
-      digitalWrite(red_lamp, LOW);
-      digitalWrite(green_lamp, HIGH);
-      break;
-    case 4:
-      motor_reverse(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
-      digitalWrite(red_lamp, LOW);
-      digitalWrite(green_lamp, LOW);
-      break;
-    default:
-      break;
-  };
+  if(set_control_mode() == true)
+  {
+    switch (readSensor(sensor_right, sensor_left)) {
+      case 1:
+        motor_forward(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
+        digitalWrite(red_lamp, HIGH);
+        digitalWrite(green_lamp, HIGH);
+        break;
+      case 2:
+        motor_left(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
+        digitalWrite(red_lamp, HIGH);
+        digitalWrite(green_lamp, LOW);
+        break;
+      case 3:
+        motor_right(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
+        digitalWrite(red_lamp, LOW);
+        digitalWrite(green_lamp, HIGH);
+        break;
+      case 4:
+        motor_reverse(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
+        digitalWrite(red_lamp, LOW);
+        digitalWrite(green_lamp, LOW);
+        break;
+      default:
+        break;
+    };
+  }
+  else {
+    // engine right
+    set_veloctiy(joystick(RemoteXY.joystick_1_y - RemoteXY.joystick_1_x));
+
+    // engine left
+    set_veloctiy(joystick(RemoteXY.joystick_1_y + RemoteXY.joystick_1_x));
+    
+  }
 }
 
 int set_control_mode() {
-  if (RemoteXY.pushSwitch_Engine == 1) {
+  if (RemoteXY.pushSwitch_1 == 1) {
     autopilot = true;
   } else {
     autopilot = false;
   }
   return autopilot;
+}
+
+int joystick (int xy) {
+  if(xy>200) xy=200;
+  if(xy<-200) xy=-200;
+
+  if(xy == 0) xy=0;
+
+  if(xy>0) xy=map(xy,0,200,150,255);
+  if(xy<0) xy=map(xy,-200,0,-255,-150);
+  return xy;
 }
