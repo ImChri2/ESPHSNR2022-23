@@ -19,7 +19,6 @@ uint8_t RemoteXY_CONF[] = // 94 bytes
 
 // this structure defines all the variables and events of your control interface
 struct {
-
     // input variables
   uint8_t switch_1; // =1 if switch ON and =0 if OFF 
   int8_t joystick_1_x; // from -100 to 100  
