@@ -138,12 +138,9 @@ int set_control_mode() {
 }
 
 int joystick (int xy) {
-  if(xy>200) xy=200;
-  if(xy<-200) xy=-200;
+  // Limit xy to the range [-200, 200]
+  xy = constrain(xy, -200, 200);
 
-  if(xy == 0) xy=0;
-
-  if(xy>0) xy=map(xy,0,200,150,255);
-  if(xy<0) xy=map(xy,-200,0,-255,-150);
-  return xy;
+  // Map xy to the range [-255, 255]
+  return map(xy, -200, 200, -255, 255);
 }
