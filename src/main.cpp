@@ -91,7 +91,7 @@ int readSensor(int sensor_right, int sensor_left) {
 void loop() {
   RemoteXY_Handler ();
   // tells what the sensor is reading and what to do
-  if(set_control_mode() == true)
+  if(set_control_mode())
   {
     switch (readSensor(sensor_right, sensor_left)) {
       case 1:
