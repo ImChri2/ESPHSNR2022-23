@@ -94,57 +94,46 @@ int readSensor(int sensor_right, int sensor_left) {
 void loop() {
   RemoteXY_Handler ();
   // tells what the sensor is reading and what to do
-  if(set_control_mode())
-  {
+  if(set_control_mode()) {
     switch (readSensor(sensor_right, sensor_left)) {
       case 1:
-        motor_forward(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
-        digitalWrite(red_lamp, HIGH);
+        motor_forward(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);  
+        digitalWrite(red_lamp, HIGH); // FORWARD = RED & GREEN
         digitalWrite(green_lamp, HIGH);
         break;
       case 2:
         motor_left(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
-        digitalWrite(red_lamp, HIGH);
+        digitalWrite(red_lamp, HIGH); // LEFT = RED
         digitalWrite(green_lamp, LOW);
         break;
       case 3:
         motor_right(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
-        digitalWrite(red_lamp, LOW);
+        digitalWrite(red_lamp, LOW);  // RIGHT = GREEN
         digitalWrite(green_lamp, HIGH);
         break;
       case 4:
         motor_reverse(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
-        digitalWrite(red_lamp, LOW);
+        digitalWrite(red_lamp, LOW);  // Reverse = NEITHER
         digitalWrite(green_lamp, LOW);
         break;
       default:
         break;
     };
-  }
-  else {
-    // engine right
-    int right_motor_speed = joystick(RemoteXY.joystick_1_y - RemoteXY.joystick_1_x);
-
-
-    // engine left
-    int left_motor_speed = joystick(RemoteXY.joystick_1_y + RemoteXY.joystick_1_x);
-
-  if (RemoteXY.joystick_1_y > 0) {
-      motor_forward_val (Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, right_motor_speed, left_motor_speed);
-//  } else if (RemoteXY.joystick_1_y < 0) {
-//      left_motor_speed *= -1;
-//      motor_right_val(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, right_motor_speed, left_motor_speed);
-  } else if (RemoteXY.joystick_1_y < 0) {
-      right_motor_speed *= -1;
-      left_motor_speed *= -1;
-      motor_reverse_val(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, right_motor_speed, left_motor_speed);
-//  } else if (right_motor_speed < 0 && left_motor_speed > 0) {
-//      right_motor_speed *= -1;
-//      motor_left_val(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, right_motor_speed, left_motor_speed);
   } else {
-      motor_stop(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
+      // engine right
+      int right_motor_speed = joystick(RemoteXY.joystick_1_y - RemoteXY.joystick_1_x);
+
+      // engine left
+      int left_motor_speed = joystick(RemoteXY.joystick_1_y + RemoteXY.joystick_1_x);
+
+    if (RemoteXY.joystick_1_y > 0) {
+        motor_forward_val (Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, right_motor_speed, left_motor_speed);
+    } else if (RemoteXY.joystick_1_y < 0) {
+        motor_reverse_val(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, right_motor_speed, left_motor_speed);
+    } else {
+        motor_stop(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
+    }
   }
-}
 }
 
 int set_control_mode() {
@@ -162,7 +151,7 @@ int joystick (int xy) {
  
   if(xy == 0) xy=0;
 
-  if(xy>0) xy=(int)map(xy,0,200,170,255);
-  if(xy<0) xy=(int)map(xy,-200,0,-255,-170);
+  if(xy>0) xy=(int)map(xy,0,200,175,255);
+  if(xy<0) xy=(int)map(xy,-200,0,255,175);
   return xy;
 }
