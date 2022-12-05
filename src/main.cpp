@@ -126,7 +126,7 @@ void loop() {
       // engine left
       int left_motor_speed = joystick(RemoteXY.joystick_1_y + RemoteXY.joystick_1_x);
 
-    if (RemoteXY.joystick_1_y > 0) {
+    if (RemoteXY.joystick_1_y >= 0) {
         motor_forward_val (Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, right_motor_speed, left_motor_speed);
     } else if (RemoteXY.joystick_1_y < 0) {
         motor_reverse_val(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, right_motor_speed, left_motor_speed);
