@@ -2,6 +2,7 @@
 #include "MotorControl.hpp"
 #include "Autopilot.cpp"
 
+
 #define REMOTEXY_MODE__ESP32CORE_BLE
 #include <BLEDevice.h>
 #include <RemoteXY.h>
@@ -10,12 +11,17 @@
 #define REMOTEXY_ACCESS_PASSWORD "#DasBesteEsp2022!"
 // RemoteXY configurate
 #pragma pack(push, 1)
-uint8_t RemoteXY_CONF[] = // 94 bytes
- { 255,5,0,0,0,87,0,16,29,1,2,1,3,71,29,11,2,26,31,31,
- 83,101,110,115,111,114,0,80,104,111,110,101,0,10,48,38,74,19,19,4,
- 36,8,32,71,79,32,0,24,83,84,79,80,0,2,1,3,88,29,8,2,
- 26,31,31,77,111,116,46,79,78,0,77,111,116,46,111,102,102,0,4,48,
- 10,3,10,64,2,26,4,48,40,3,10,64,2,26 };
+uint8_t RemoteXY_CONF[] =   // 96 bytes
+  { 255,5,0,11,0,89,0,16,29,1,2,1,3,71,29,11,2,26,31,31,
+  83,101,110,115,111,114,0,80,104,111,110,101,0,67,4,3,62,55,5,2,
+  26,11,5,32,4,4,55,55,2,26,31,10,48,38,74,19,19,4,36,8,
+  32,71,79,32,0,24,83,84,79,80,0,2,1,3,89,29,7,2,26,31,
+  31,77,111,116,46,79,78,0,77,111,116,46,79,70,70,0 };
+
+
+int joystick (int xy);
+int set_control_mode();
+
 
 // this structure defines all the variables and events of your control interface
 struct {
@@ -48,8 +54,6 @@ bool autopilot = false;
 
 int red_lamp = 6;
 int green_lamp = 7;
-
-
 
 void setup() {
   RemoteXY_Init ();
@@ -119,12 +123,28 @@ void loop() {
   }
   else {
     // engine right
-    set_veloctiy(joystick(RemoteXY.joystick_1_y - RemoteXY.joystick_1_x));
+    int right_motor_speed = joystick(RemoteXY.joystick_1_y - RemoteXY.joystick_1_x);
+
 
     // engine left
-    set_veloctiy(joystick(RemoteXY.joystick_1_y + RemoteXY.joystick_1_x));
-    
+    int left_motor_speed = joystick(RemoteXY.joystick_1_y + RemoteXY.joystick_1_x);
+
+  if (RemoteXY.joystick_1_y > 0) {
+      motor_forward_val (Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, right_motor_speed, left_motor_speed);
+//  } else if (RemoteXY.joystick_1_y < 0) {
+//      left_motor_speed *= -1;
+//      motor_right_val(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, right_motor_speed, left_motor_speed);
+  } else if (RemoteXY.joystick_1_y < 0) {
+      right_motor_speed *= -1;
+      left_motor_speed *= -1;
+      motor_reverse_val(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, right_motor_speed, left_motor_speed);
+//  } else if (right_motor_speed < 0 && left_motor_speed > 0) {
+//      right_motor_speed *= -1;
+//      motor_left_val(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, right_motor_speed, left_motor_speed);
+  } else {
+      motor_stop(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
   }
+}
 }
 
 int set_control_mode() {
@@ -142,7 +162,7 @@ int joystick (int xy) {
  
   if(xy == 0) xy=0;
 
-  if(xy>0) xy=map(xy,0,200,150,255);
-  if(xy<0) xy=map(xy,-200,0,-255,-150);
+  if(xy>0) xy=(int)map(xy,0,200,170,255);
+  if(xy<0) xy=(int)map(xy,-200,0,-255,-170);
   return xy;
 }

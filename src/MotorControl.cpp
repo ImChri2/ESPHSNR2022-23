@@ -57,3 +57,34 @@ void set_pins(int left_a, int left_b, int right_a, int right_b) {
   digitalWrite(right_a, HIGH);
   digitalWrite(right_b, HIGH);
 }
+
+// Bewege den Roboter nach links
+void motor_left_val(int left_a, int left_b, int right_a, int right_b, int rvel, int lvel) {
+  analogWrite(left_a, LOW);
+  analogWrite(left_b, lvel);
+  analogWrite(right_a, LOW);
+  analogWrite(right_b, rvel);
+}
+
+// Bewege den Roboter nach rechts
+void motor_right_val(int left_a, int left_b, int right_a, int right_b, int rvel, int lvel) {
+  analogWrite(left_a, lvel);
+  analogWrite(left_b, LOW);
+  analogWrite(right_a, rvel);
+  analogWrite(right_b, LOW);
+}
+
+// Bewege den Roboter nach vorne
+void motor_forward_val(int left_a, int left_b, int right_a, int right_b, int rvel, int lvel) {
+  analogWrite(left_a, lvel);            //LEFT_motor takes reverse inputs
+  analogWrite(left_b, LOW);                 //Truth table flipped for left_a/b
+  analogWrite(right_a, LOW);
+  analogWrite(right_b, rvel);
+}
+
+void motor_reverse_val(int left_a, int left_b, int right_a, int right_b, int rvel, int lvel) {
+  analogWrite(left_a, LOW);            //LEFT_motor takes reverse inputs
+  analogWrite(left_b, lvel);                 //Truth table flipped for left_a/b
+  analogWrite(right_a, rvel);
+  analogWrite(right_b, LOW);
+}
