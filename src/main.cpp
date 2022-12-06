@@ -41,12 +41,13 @@ struct {
 
 } RemoteXY;
 
-struct {
+struct motor_t {
   uint8_t motor; // 0 left, 1 right
   int8_t direction; // 0 forward, 1 backward, 2 left, 3 right
   unsigned left_speed; // 0-255
   unsigned right_speed; // 0-255
-} motor;
+};
+motor_t motor;
 #pragma pack(pop)
 
 #define PIN_PUSHSWITCH_1 10
@@ -77,16 +78,19 @@ void setup() {
   set_pins(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
 }
 
-int calc_speeds(int right, int left) {
-  // Define a lookup table for motor speeds
-  const int speeds[] = {0, 50, 100, 150, 200, 255};
-
+void calc_speeds(motor_t * motor, int right, int left) {
+  if (right < 200) {
+    right = 200;
+  }
+  if (left < 200) {
+    left = 200;
+  }
   // Look up the motor speeds using the sensor values as indices
-  int right_motor_speed = map(speeds[right / 1000],0,255,175,255);
-  int left_motor_speed = map(speeds[left / 1000],0,255,175,255);
-  printf("left: %i right: %i\n", left_motor_speed, right_motor_speed);
+  int right_motor_speed = map(right,200,4095,175,255);
+  int left_motor_speed = map(left,200,4095,175,255);
   // Return the motor speeds
-  return left_motor_speed, right_motor_speed;
+  motor->left_speed = left_motor_speed;
+  motor->right_speed = right_motor_speed;
 }
 
 int readSensor(int sensor_right, int sensor_left) {
@@ -95,8 +99,6 @@ int readSensor(int sensor_right, int sensor_left) {
   int sensor_left_value = analogRead(sensor_left);
   Serial.println(sensor_right_value);
   Serial.println(sensor_left_value);
-
-  motor.left_speed, motor.right_speed = calc_speeds(sensor_right_value, sensor_left_value);
 
   // if both sensors are on black
   if(sensor_right_value > 1000 && sensor_left_value > 1000) {
@@ -117,6 +119,7 @@ void loop() {
   RemoteXY_Handler ();
   // tells what the sensor is reading and what to do
   if(set_control_mode()) {
+    calc_speeds(&motor, sensor_right, sensor_left);
     switch (readSensor(sensor_right, sensor_left)) {
       case 1:
         motor_forward(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, motor.left_speed, motor.right_speed);  
