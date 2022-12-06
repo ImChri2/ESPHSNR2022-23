@@ -5,9 +5,9 @@ extern int veloctiy;
 
 void motor_stop(int left_a, int left_b, int right_a, int right_b);
 
-void motor_left(int left_a, int left_b, int right_a, int right_b);
+void motor_left(int left_a, int left_b, int right_a, int right_b, int velocity_left, int velocity_right);
 
-void motor_right(int left_a, int left_b, int right_a, int right_b);
+void motor_right(int left_a, int left_b, int right_a, int right_b, int velocity_left, int velocity_right);
 
 void motor_forward(int left_a, int left_b, int right_a, int right_b);
 

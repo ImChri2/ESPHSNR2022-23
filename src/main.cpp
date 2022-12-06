@@ -40,6 +40,13 @@ struct {
   uint8_t connect_flag;  // =1 if wire connected, else =0 
 
 } RemoteXY;
+
+struct {
+  uint8_t motor; // 0 left, 1 right
+  int8_t direction; // 0 forward, 1 backward, 2 left, 3 right
+  unsigned left_speed; // 0-255
+  unsigned right_speed; // 0-255
+} motor;
 #pragma pack(pop)
 
 #define PIN_PUSHSWITCH_1 10
@@ -77,15 +84,20 @@ int readSensor(int sensor_right, int sensor_left) {
   Serial.println(sensor_right_value);
   Serial.println(sensor_left_value);
 
+  int left_motor_speed, right_motor_speed = calc_speeds(sensor_right_value, sensor_left_value);
+
+  motor.left_speed = left_motor_speed;
+  motor.right_speed = right_motor_speed;
+
   // if both sensors are on black
   if(sensor_right_value > 1000 && sensor_left_value > 1000) {
-    return 1;
+    return motor.direction = 1;
   } else if(sensor_right_value > 1000 && sensor_left_value < 1000) {
-    return 2;
+    return motor.direction = 2;
   } else if(sensor_right_value < 1000 && sensor_left_value > 1000) {
-    return 3;
+    return motor.direction = 3;
   } else if(sensor_right_value < 1000 && sensor_left_value < 1000) {
-    return 4;
+    return motor.direction = 4;
   } else {
     return 0;
   }
@@ -103,12 +115,12 @@ void loop() {
         digitalWrite(green_lamp, HIGH);
         break;
       case 2:
-        motor_left(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
+        motor_left(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, motor.left_speed, motor.right_speed);
         digitalWrite(red_lamp, HIGH); // LEFT = RED
         digitalWrite(green_lamp, LOW);
         break;
       case 3:
-        motor_right(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
+        motor_right(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, motor.left_speed, motor.right_speed);
         digitalWrite(red_lamp, LOW);  // RIGHT = GREEN
         digitalWrite(green_lamp, HIGH);
         break;
@@ -151,4 +163,51 @@ int joystick (int y, int x) {
   if(xy>0) xy=(int)map(xy,0,141,175,255);
   //if(xy<0) xy=(int)map(xy,141,0,255,175);
   return xy;
+}
+
+int calc_speeds(int right, int left) {
+  int right_motor_speed = 0;
+  int left_motor_speed = 0;
+
+  switch(right) {
+    case 2000:
+      right_motor_speed = 255;
+      break;
+    case 1500:
+      right_motor_speed = 200;
+      break;
+    case 1000:
+      right_motor_speed = 150;
+      break;
+    case 500:
+      right_motor_speed = 100;
+      break;
+    case 100:
+      right_motor_speed = 50;
+      break;
+    default:
+      right_motor_speed = 0;
+      break;
+  }
+  switch (left)
+  {
+  case 2000:
+    left_motor_speed = 255;
+    break;
+  case 1500:
+    left_motor_speed = 200;
+    break;
+  case 1000:
+    left_motor_speed = 150;
+    break;
+  case 500:
+    left_motor_speed = 100;
+    break;
+  case 100:
+    left_motor_speed = 50;
+    break;
+  default:
+    break;
+  }
+  return left_motor_speed, right_motor_speed;
 }
