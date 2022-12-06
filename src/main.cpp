@@ -20,7 +20,7 @@ uint8_t RemoteXY_CONF[] =   // 96 bytes
   31,77,111,116,46,79,78,0,77,111,116,46,79,70,70,0 };
 
 
-int joystick (int xy);
+//int joystick (int xy);
 int set_control_mode();
 
 
@@ -82,8 +82,8 @@ int calc_speeds(int right, int left) {
   const int speeds[] = {0, 50, 100, 150, 200, 255};
 
   // Look up the motor speeds using the sensor values as indices
-  int right_motor_speed = speeds[right / 1000];
-  int left_motor_speed = speeds[left / 1000];
+  int right_motor_speed = map(speeds[right / 1000],0,255,175,255);
+  int left_motor_speed = map(speeds[left / 1000],0,255,175,255);
 
   // Return the motor speeds
   return left_motor_speed, right_motor_speed;
@@ -142,7 +142,7 @@ void loop() {
         break;
     };
   } else {
-      // engine right
+    /*  // engine right
       int right_motor_speed = joystick(RemoteXY.joystick_1_y, RemoteXY.joystick_1_x);
 
       // engine left
@@ -154,7 +154,7 @@ void loop() {
         motor_reverse_val(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, right_motor_speed, left_motor_speed);
     } else {
         motor_stop(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
-    }
+    }*/
   }
 }
 
@@ -167,10 +167,10 @@ int set_control_mode() {
   return autopilot;
 }
 
-int joystick (int y, int x) {
+/*int joystick (int y, int x) {
   int xy = sqrt(x*x+y*y);
   if(xy>0) xy=(int)map(xy,0,141,175,255);
   //if(xy<0) xy=(int)map(xy,141,0,255,175);
   return xy;
-}
+}*/
 
