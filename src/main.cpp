@@ -6,7 +6,7 @@
 #define REMOTEXY_MODE__ESP32CORE_BLE
 #include <BLEDevice.h>
 #include <RemoteXY.h>
-#include "../lib/QTRSensor/QTRSensors.h"
+//#include "../lib/QTRSensor/QTRSensors.h"
 // RemoteXY connection settings
 #define REMOTEXY_BLUETOOTH_NAME "Ball-E connect"
 #define REMOTEXY_ACCESS_PASSWORD "#DasBesteEsp2022!"
@@ -77,6 +77,18 @@ void setup() {
   set_pins(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
 }
 
+int calc_speeds(int right, int left) {
+  // Define a lookup table for motor speeds
+  const int speeds[] = {0, 50, 100, 150, 200, 255};
+
+  // Look up the motor speeds using the sensor values as indices
+  int right_motor_speed = speeds[right / 1000];
+  int left_motor_speed = speeds[left / 1000];
+
+  // Return the motor speeds
+  return left_motor_speed, right_motor_speed;
+}
+
 int readSensor(int sensor_right, int sensor_left) {
   //delay(100);
   int sensor_right_value = analogRead(sensor_right);
@@ -84,10 +96,7 @@ int readSensor(int sensor_right, int sensor_left) {
   Serial.println(sensor_right_value);
   Serial.println(sensor_left_value);
 
-  int left_motor_speed, right_motor_speed = calc_speeds(sensor_right_value, sensor_left_value);
-
-  motor.left_speed = left_motor_speed;
-  motor.right_speed = right_motor_speed;
+  motor.left_speed, motor.right_speed = calc_speeds(sensor_right_value, sensor_left_value);
 
   // if both sensors are on black
   if(sensor_right_value > 1000 && sensor_left_value > 1000) {
@@ -110,7 +119,7 @@ void loop() {
   if(set_control_mode()) {
     switch (readSensor(sensor_right, sensor_left)) {
       case 1:
-        motor_forward(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);  
+        motor_forward(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, motor.left_speed, motor.right_speed);  
         digitalWrite(red_lamp, HIGH); // FORWARD = RED & GREEN
         digitalWrite(green_lamp, HIGH);
         break;
@@ -125,7 +134,7 @@ void loop() {
         digitalWrite(green_lamp, HIGH);
         break;
       case 4:
-        motor_reverse(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
+        motor_reverse(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, motor.left_speed, motor.right_speed);
         digitalWrite(red_lamp, LOW);  // Reverse = NEITHER
         digitalWrite(green_lamp, LOW);
         break;
@@ -165,49 +174,3 @@ int joystick (int y, int x) {
   return xy;
 }
 
-int calc_speeds(int right, int left) {
-  int right_motor_speed = 0;
-  int left_motor_speed = 0;
-
-  switch(right) {
-    case 2000:
-      right_motor_speed = 255;
-      break;
-    case 1500:
-      right_motor_speed = 200;
-      break;
-    case 1000:
-      right_motor_speed = 150;
-      break;
-    case 500:
-      right_motor_speed = 100;
-      break;
-    case 100:
-      right_motor_speed = 50;
-      break;
-    default:
-      right_motor_speed = 0;
-      break;
-  }
-  switch (left)
-  {
-  case 2000:
-    left_motor_speed = 255;
-    break;
-  case 1500:
-    left_motor_speed = 200;
-    break;
-  case 1000:
-    left_motor_speed = 150;
-    break;
-  case 500:
-    left_motor_speed = 100;
-    break;
-  case 100:
-    left_motor_speed = 50;
-    break;
-  default:
-    break;
-  }
-  return left_motor_speed, right_motor_speed;
-}
