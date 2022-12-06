@@ -6,6 +6,7 @@
 #define REMOTEXY_MODE__ESP32CORE_BLE
 #include <BLEDevice.h>
 #include <RemoteXY.h>
+#include "../lib/QTRSensor/QTRSensors.h"
 // RemoteXY connection settings
 #define REMOTEXY_BLUETOOTH_NAME "Ball-E connect"
 #define REMOTEXY_ACCESS_PASSWORD "#DasBesteEsp2022!"
