@@ -34,6 +34,7 @@ void motor_forward(int left_a, int left_b, int right_a, int right_b) {
   analogWrite(right_b, velocity);
 }
 
+// Bewege den Roboter rückwarts
 void motor_reverse(int left_a, int left_b, int right_a, int right_b) {
   analogWrite(left_a, LOW);            //LEFT_motor takes reverse inputs
   analogWrite(left_b, velocity);                 //Truth table flipped for left_a/b
@@ -58,23 +59,8 @@ void set_pins(int left_a, int left_b, int right_a, int right_b) {
   digitalWrite(right_b, HIGH);
 }
 
-// Bewege den Roboter nach links
-void motor_left_val(int left_a, int left_b, int right_a, int right_b, int rvel, int lvel) {
-  analogWrite(left_a, LOW);
-  analogWrite(left_b, lvel);
-  analogWrite(right_a, LOW);
-  analogWrite(right_b, rvel);
-}
 
-// Bewege den Roboter nach rechts
-void motor_right_val(int left_a, int left_b, int right_a, int right_b, int rvel, int lvel) {
-  analogWrite(left_a, lvel);
-  analogWrite(left_b, LOW);
-  analogWrite(right_a, rvel);
-  analogWrite(right_b, LOW);
-}
-
-// Bewege den Roboter nach vorne
+// Bewege den Roboter nach vorne mit übergebener Geschwindigkeit
 void motor_forward_val(int left_a, int left_b, int right_a, int right_b, int rvel, int lvel) {
   analogWrite(left_a, lvel);            //LEFT_motor takes reverse inputs
   analogWrite(left_b, LOW);                 //Truth table flipped for left_a/b
@@ -82,6 +68,7 @@ void motor_forward_val(int left_a, int left_b, int right_a, int right_b, int rve
   analogWrite(right_b, rvel);
 }
 
+// Bewege den Roboter rückwärts mit übergebener Geschwindigkeit
 void motor_reverse_val(int left_a, int left_b, int right_a, int right_b, int rvel, int lvel) {
   analogWrite(left_a, LOW);            //LEFT_motor takes reverse inputs
   analogWrite(left_b, lvel);                 //Truth table flipped for left_a/b

@@ -146,12 +146,12 @@ int set_control_mode() {
 }
 
 int joystick (int xy) {
-  if(xy>200) xy=200;
-  if(xy<-200) xy=-200;
+  if(xy>100) xy=100;
+  if(xy<-100) xy=-100;
  
   if(xy == 0) xy=0;
 
-  if(xy>0) xy=(int)map(xy,0,200,175,255);
-  if(xy<0) xy=(int)map(xy,-200,0,255,175);
+  if(xy>0) xy=(int)map(xy,0,100,175,255);
+  if(xy<0) xy=(int)map(xy,-100,0,255,175);
   return xy;
 }
