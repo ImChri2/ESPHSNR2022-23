@@ -122,10 +122,10 @@ void loop() {
     };
   } else {
       // engine right
-      int right_motor_speed = joystick(RemoteXY.joystick_1_y - RemoteXY.joystick_1_x);
+      int right_motor_speed = joystick(RemoteXY.joystick_1_y, RemoteXY.joystick_1_x);
 
       // engine left
-      int left_motor_speed = joystick(RemoteXY.joystick_1_y + RemoteXY.joystick_1_x);
+      int left_motor_speed = joystick(RemoteXY.joystick_1_y, RemoteXY.joystick_1_x);
 
     if (RemoteXY.joystick_1_y >= 0) {
         motor_forward_val (Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, right_motor_speed, left_motor_speed);
@@ -146,13 +146,9 @@ int set_control_mode() {
   return autopilot;
 }
 
-int joystick (int xy) {
-  if(xy>100) xy=100;
-  if(xy<-100) xy=-100;
- 
-  if(xy == 0) xy=0;
-
-  if(xy>0) xy=(int)map(xy,0,100,175,255);
-  if(xy<0) xy=(int)map(xy,-100,0,255,175);
+int joystick (int y, int x) {
+  int xy = sqrt(x*x+y*y);
+  if(xy>0) xy=(int)map(xy,0,141,175,255);
+  //if(xy<0) xy=(int)map(xy,141,0,255,175);
   return xy;
 }
