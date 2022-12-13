@@ -1,7 +1,5 @@
 #include <Arduino.h>
 #include "MotorControl.hpp"
-#include "Autopilot.cpp"
-
 
 #define REMOTEXY_MODE__ESP32CORE_BLE
 #include <BLEDevice.h>
