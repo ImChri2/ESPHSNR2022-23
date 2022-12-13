@@ -4,6 +4,7 @@
 #define REMOTEXY_MODE__ESP32CORE_BLE
 #include <BLEDevice.h>
 #include <RemoteXY.h>
+#include <time.h>
 //#include "../lib/QTRSensor/QTRSensors.h"
 // RemoteXY connection settings
 #define REMOTEXY_BLUETOOTH_NAME "Ball-E connect"
@@ -77,15 +78,51 @@ void setup() {
 }
 
 void calc_speeds(motor_t * motor, int right, int left) {
-  if (right < 200) {
+  /*if (right < 200) {
     right = 200;
   }
   if (left < 200) {
     left = 200;
   }
   // Look up the motor speeds using the sensor values as indices
-  int right_motor_speed = map(right,200,4095,175,255);
-  int left_motor_speed = map(left,200,4095,175,255);
+  //int right_motor_speed = map(right,4095,400,175,255);
+  //int left_motor_speed = map(left,4095,400,175,255);*/
+  int left_time_since_last_black_contact = 0;
+  int right_time_since_last_black_contact = 0;
+  int right_motor_speed;
+  int left_motor_speed;
+    // Get current time in milliseconds
+  time_t now = time(NULL);
+  //strftime(now, "%Y-%m-%d %H:%M:%S", t);
+  struct tm *t = localtime(&now);
+
+  // Format time in milliseconds
+  char buf[128];
+  strftime(buf, sizeof buf, "%Y-%m-%d %H:%M:%S.%f", t);
+  Serial.printf("Current time: %s\n", buf);
+  
+  if(right > 1000 || left > 1000) {
+    right_motor_speed = right > 1000 ? 255 : right_motor_speed;
+    left_motor_speed = left > 1000 ? 255 : left_motor_speed;
+  }
+  /*TIme idea testing
+  if(right < 900 || left < 900) {
+    right < 900 ? right_time_since_last_black_contact++ : right_time_since_last_black_contact == 0;
+    left < 900 ? left_time_since_last_black_contact++ : left_time_since_last_black_contact == 0;
+  }*/
+  if(right > 600 || left > 600) {
+    right_motor_speed = right > 800 ? 250 : right_motor_speed;
+    left_motor_speed = left > 800 ? 250 : left_motor_speed;
+  }
+  if(right > 400 || left > 400) {
+    right_motor_speed = right > 400 ? 220 : right_motor_speed;
+    left_motor_speed = left > 400 ? 220 : left_motor_speed;
+  }
+  if(right > 200 || left > 200) {
+    right_motor_speed = right > 200 ? 200 : right_motor_speed;
+    left_motor_speed = left > 200 ? 200 : left_motor_speed;
+  }
+
   // Return the motor speeds
   motor->left_speed = left_motor_speed;
   motor->right_speed = right_motor_speed;
