@@ -59,6 +59,8 @@ int Motor_rechts_B = 0;
 int sensor_right = 5;
 int sensor_left = 4;
 bool autopilot = false;
+int counter_left = 0;
+int counter_right = 0;
 
 int red_lamp = 6;
 int green_lamp = 7;
@@ -100,7 +102,49 @@ void calc_speeds(motor_t * motor, int right, int left) {
   char buf[128];
   strftime(buf, sizeof buf, "%Y-%m-%d %H:%M:%S.%f", t);
   Serial.printf("Current time: %s\n", buf);
+
+  Serial.printf("Right: %d\n", right);
+  Serial.printf("Left: %d\n", left);
+
+  if(right < 4000) {
+    counter_right++;
+  } else {
+    counter_right = 0;
+  } 
+  if (left < 4000) {
+    counter_left++;
+  } else {
+    counter_left = 0;
+  }
   
+  Serial.printf("Counter Left: %d\n", counter_left);
+  Serial.printf("Counter Right: %d\n", counter_right);
+
+  // if(counter_right > 1) {
+  //   right_motor_speed = 255;
+  //   //left_motor_speed = 240;
+  //   left_motor_speed = map(counter_left,0,40,250,195);
+  // } else if(counter_left > 1) {
+  //   //right_motor_speed = 240;
+  //   left_motor_speed = 255;
+  //   right_motor_speed = map(counter_right,0,40,250,195);
+  // } else {
+  //   right_motor_speed = 255;
+  //   left_motor_speed = 255;
+  // }
+
+  if(right > 4000 || left > 4000) {
+    right_motor_speed = right > 4000 ? 240 : right_motor_speed;
+    left_motor_speed = left > 4000 ? 240 : left_motor_speed;
+  }
+  if(right > 3000 || left > 3000) {
+    right_motor_speed = right > 3000 ? 245 : right_motor_speed;
+    left_motor_speed = left > 3000 ? 245 : left_motor_speed;
+  }
+    if(right > 2000 || left > 2000) {
+    right_motor_speed = right > 2000 ? 250 : right_motor_speed;
+    left_motor_speed = left > 2000 ? 250 : left_motor_speed;
+  }
   if(right > 1000 || left > 1000) {
     right_motor_speed = right > 1000 ? 255 : right_motor_speed;
     left_motor_speed = left > 1000 ? 255 : left_motor_speed;
@@ -110,15 +154,15 @@ void calc_speeds(motor_t * motor, int right, int left) {
     right < 900 ? right_time_since_last_black_contact++ : right_time_since_last_black_contact == 0;
     left < 900 ? left_time_since_last_black_contact++ : left_time_since_last_black_contact == 0;
   }*/
-  if(right > 600 || left > 600) {
-    right_motor_speed = right > 800 ? 250 : right_motor_speed;
-    left_motor_speed = left > 800 ? 250 : left_motor_speed;
+  if(right > 1000 || left > 1000) {
+    right_motor_speed = right > 1000 ? 255 : right_motor_speed;
+    left_motor_speed = left > 1000 ? 255 : left_motor_speed;
   }
   if(right > 400 || left > 400) {
-    right_motor_speed = right > 400 ? 220 : right_motor_speed;
-    left_motor_speed = left > 400 ? 220 : left_motor_speed;
+    right_motor_speed = right > 400 ? 255 : right_motor_speed;
+    left_motor_speed = left > 400 ? 255 : left_motor_speed;
   }
-  if(right > 200 || left > 200) {
+  if(right > 220 || left > 220) {
     right_motor_speed = right > 200 ? 200 : right_motor_speed;
     left_motor_speed = left > 200 ? 200 : left_motor_speed;
   }
@@ -136,14 +180,14 @@ int readSensor(int sensor_right, int sensor_left) {
   Serial.println(sensor_left_value);
 
   // if both sensors are on black
-  if(sensor_right_value > 1000 && sensor_left_value > 1000) {
-    return motor.direction = 1;
-  } else if(sensor_right_value > 1000 && sensor_left_value < 1000) {
-    return motor.direction = 2;
-  } else if(sensor_right_value < 1000 && sensor_left_value > 1000) {
-    return motor.direction = 3;
+  if(sensor_right_value > 4000 && sensor_left_value > 4000) {
+    return motor.direction = 1; // Forward
+  } else if(sensor_right_value > 2000 && sensor_left_value < 2000) {
+    return motor.direction = 2; // Left
+  } else if(sensor_right_value < 2000 && sensor_left_value > 2000) {
+    return motor.direction = 3; // Right
   } else if(sensor_right_value < 1000 && sensor_left_value < 1000) {
-    return motor.direction = 4;
+    return motor.direction = 4; // Backward
   } else {
     return 0;
   }
@@ -154,7 +198,7 @@ void loop() {
   RemoteXY_Handler ();
   // tells what the sensor is reading and what to do
   if(set_control_mode()) {
-    calc_speeds(&motor, sensor_right, sensor_left);
+    calc_speeds(&motor, analogRead(sensor_right), analogRead(sensor_left));
     switch (readSensor(sensor_right, sensor_left)) {
       case 1:
         motor_forward(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, motor.left_speed, motor.right_speed);  
@@ -215,4 +259,3 @@ int joystick (int xy) {
   if(xy<0) xy=(int)map(xy,-100,0,255,175);
   return xy;
 }
-
