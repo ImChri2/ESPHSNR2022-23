@@ -119,21 +119,23 @@ void calc_speeds(motor_t * motor, int right, int left) {
   
   Serial.printf("Counter Left: %d\n", counter_left);
   Serial.printf("Counter Right: %d\n", counter_right);
+  
+  
+    
+  if(counter_right > 1) {
+    right_motor_speed = 255;
+    //left_motor_speed = 240;
+    left_motor_speed = map(counter_left,1,40,255,190);
+   } else if(counter_left > 1) {
+   // right_motor_speed = 240;
+    left_motor_speed = 255;
+    right_motor_speed = map(counter_right,1,40,255,190);
+   } else {
+    right_motor_speed = 255;
+    left_motor_speed = 255;
+  }
 
-  // if(counter_right > 1) {
-  //   right_motor_speed = 255;
-  //   //left_motor_speed = 240;
-  //   left_motor_speed = map(counter_left,0,40,250,195);
-  // } else if(counter_left > 1) {
-  //   //right_motor_speed = 240;
-  //   left_motor_speed = 255;
-  //   right_motor_speed = map(counter_right,0,40,250,195);
-  // } else {
-  //   right_motor_speed = 255;
-  //   left_motor_speed = 255;
-  // }
-
-  if(right > 4000 || left > 4000) {
+  /*if(right > 4000 || left > 4000) {
     right_motor_speed = right > 4000 ? 240 : right_motor_speed;
     left_motor_speed = left > 4000 ? 240 : left_motor_speed;
   }
@@ -148,7 +150,7 @@ void calc_speeds(motor_t * motor, int right, int left) {
   if(right > 1000 || left > 1000) {
     right_motor_speed = right > 1000 ? 255 : right_motor_speed;
     left_motor_speed = left > 1000 ? 255 : left_motor_speed;
-  }
+  }*/
   /*TIme idea testing
   if(right < 900 || left < 900) {
     right < 900 ? right_time_since_last_black_contact++ : right_time_since_last_black_contact == 0;
@@ -199,7 +201,7 @@ void loop() {
   // tells what the sensor is reading and what to do
   if(set_control_mode()) {
     calc_speeds(&motor, analogRead(sensor_right), analogRead(sensor_left));
-    switch (readSensor(sensor_right, sensor_left)) {
+    switch (readSensor(sensor_right, sensor_left)){
       case 1:
         motor_forward(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, motor.left_speed, motor.right_speed);  
         digitalWrite(red_lamp, HIGH); // FORWARD = RED & GREEN
