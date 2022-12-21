@@ -144,20 +144,21 @@ void calc_speeds(motor_t * motor, int right, int left) {
     right_motor_speed = 240;
     left_motor_speed = 240;
   }*/
+  
   if(right > 4000 || left > 4000) {
     right_motor_speed = right > 4000 ? 250 : right_motor_speed;
     left_motor_speed = left > 4000 ? 250 : left_motor_speed;
   }
   if(right < 4000 || left < 4000) {
-    right_motor_speed = counter_left < 4000 ? 180 : right_motor_speed;
-    left_motor_speed = counter_right < 4000 ? 180 : left_motor_speed;
+    right_motor_speed = left < 4000 ? 180 : right_motor_speed;
+    left_motor_speed = right < 4000 ? 180 : left_motor_speed;
     /*if(counter_left > counter_right) {
       right_motor_speed = 190;
     } else if(counter_right > counter_left) {
       left_motor_speed = 190;
     }*/
   }
-
+  
   /*if(right > 4000 || left > 4000) {
     right_motor_speed = right > 4000 ? 240 : right_motor_speed;
     left_motor_speed = left > 4000 ? 240 : left_motor_speed;
@@ -213,7 +214,7 @@ int readSensor(int sensor_right, int sensor_left) {
     return motor.direction = 3; // Right
   }*/else if(counter_left > 100 && counter_right > 100) {
     return motor.direction = 4; // Backwards
-  } else if(sensor_right_value < 4000 && sensor_left_value < 4000) {
+  } else if(sensor_right_value < 4000 || sensor_left_value < 4000) {
     return motor.direction = 1; // Forward
   } else {
     return 0;
