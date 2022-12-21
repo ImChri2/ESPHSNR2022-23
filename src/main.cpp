@@ -5,7 +5,6 @@
 #include <BLEDevice.h>
 #include <RemoteXY.h>
 #include <time.h>
-//#include "../lib/QTRSensor/QTRSensors.h"
 // RemoteXY connection settings
 #define REMOTEXY_BLUETOOTH_NAME "Ball-E connect"
 #define REMOTEXY_ACCESS_PASSWORD "#DasBesteEsp2022!"
@@ -39,14 +38,6 @@ struct {
   uint8_t connect_flag;  // =1 if wire connected, else =0 
 
 } RemoteXY;
-
-struct motor_t {
-  uint8_t motor; // 0 left, 1 right
-  int8_t direction; // 0 forward, 1 backward, 2 left, 3 right
-  unsigned left_speed; // 0-255
-  unsigned right_speed; // 0-255
-};
-struct motor_t motor;
 #pragma pack(pop)
 
 #define PIN_PUSHSWITCH_1 10
@@ -59,8 +50,6 @@ int Motor_rechts_B = 0;
 int sensor_right = 5;
 int sensor_left = 4;
 bool autopilot = false;
-int counter_left = 0;
-int counter_right = 0;
 
 int red_lamp = 6;
 int green_lamp = 7;
@@ -79,124 +68,6 @@ void setup() {
   set_pins(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
 }
 
-void calc_speeds(motor_t * motor, int right, int left) {
-  /*if (right < 200) {
-    right = 200;
-  }
-  if (left < 200) {
-    left = 200;
-  }
-  // Look up the motor speeds using the sensor values as indices
-  //int right_motor_speed = map(right,4095,400,175,255);
-  //int left_motor_speed = map(left,4095,400,175,255);*/
-  int left_time_since_last_black_contact = 0;
-  int right_time_since_last_black_contact = 0;
-  int right_motor_speed;
-  int left_motor_speed;
-    // Get current time in milliseconds
-  time_t now = time(NULL);
-  //strftime(now, "%Y-%m-%d %H:%M:%S", t);
-  struct tm *t = localtime(&now);
-
-  // Format time in milliseconds
-  char buf[128];
-  strftime(buf, sizeof buf, "%Y-%m-%d %H:%M:%S.%f", t);
-  Serial.printf("Current time: %s\n", buf);
-
-  Serial.printf("Right: %d\n", right);
-  Serial.printf("Left: %d\n", left);
-
-  if(right < 4000) {
-    counter_right++;
-  } else {
-    counter_right = 0;
-  } 
-  if (left < 4000) {
-    counter_left++;
-  } else {
-    counter_left = 0;
-  }
-  
-  Serial.printf("Counter Left: %d\n", counter_left);
-  Serial.printf("Counter Right: %d\n", counter_right);
-  
-  
-    
-  /*if(counter_right > 1) {
-    right_motor_speed = 240;
-    left_motor_speed = 200;
-  } else if(counter_right > 5) {
-    right_motor_speed = 255;
-    left_motor_speed = 180;
-   } else if(counter_right > 10) {
-    right_motor_speed = 240;
-    left_motor_speed = 170;
-    } else if(counter_left > 1) {
-    left_motor_speed = 240;
-    right_motor_speed = 200;
-   } else if(counter_left > 5) {
-    left_motor_speed = 240;
-    right_motor_speed = 180;
-   } else if(counter_left > 10) {
-    left_motor_speed = 240;
-    right_motor_speed = 170;
-   } else {
-    right_motor_speed = 240;
-    left_motor_speed = 240;
-  }*/
-  if(right > 4000 || left > 4000) {
-    right_motor_speed = right > 4000 ? 250 : right_motor_speed;
-    left_motor_speed = left > 4000 ? 250 : left_motor_speed;
-  }
-  if(right < 4000 || left < 4000) {
-    right_motor_speed = counter_left < 4000 ? 180 : right_motor_speed;
-    left_motor_speed = counter_right < 4000 ? 180 : left_motor_speed;
-    /*if(counter_left > counter_right) {
-      right_motor_speed = 190;
-    } else if(counter_right > counter_left) {
-      left_motor_speed = 190;
-    }*/
-  }
-
-  /*if(right > 4000 || left > 4000) {
-    right_motor_speed = right > 4000 ? 240 : right_motor_speed;
-    left_motor_speed = left > 4000 ? 240 : left_motor_speed;
-  }
-  if(right < 3000 || left > 3000) {
-    right_motor_speed = right > 3000 ? 245 : right_motor_speed;
-    left_motor_speed = left > 3000 ? 245 : left_motor_speed;
-  }
-    if(right > 2000 || left > 2000) {
-    right_motor_speed = right > 2000 ? 250 : right_motor_speed;
-    left_motor_speed = left > 2000 ? 250 : left_motor_speed;
-  }
-  if(right > 1000 || left > 1000) {
-    right_motor_speed = right > 1000 ? 255 : right_motor_speed;
-    left_motor_speed = left > 1000 ? 255 : left_motor_speed;
-  }*/
-  /*TIme idea testing
-  if(right < 900 || left < 900) {
-    right < 900 ? right_time_since_last_black_contact++ : right_time_since_last_black_contact == 0;
-    left < 900 ? left_time_since_last_black_contact++ : left_time_since_last_black_contact == 0;
-  }*/
-  /*if(right > 1000 || left > 1000) {
-    right_motor_speed = right > 1000 ? 255 : right_motor_speed;
-    left_motor_speed = left > 1000 ? 255 : left_motor_speed;
-  }
-  if(right > 400 || left > 400) {
-    right_motor_speed = right > 400 ? 255 : right_motor_speed;
-    left_motor_speed = left > 400 ? 255 : left_motor_speed;
-  }
-  if(right > 220 || left > 220) {
-    right_motor_speed = right > 200 ? 200 : right_motor_speed;
-    left_motor_speed = left > 200 ? 200 : left_motor_speed;
-  }*/
-
-  // Return the motor speeds
-  motor->left_speed = left_motor_speed;
-  motor->right_speed = right_motor_speed;
-}
-
 int readSensor(int sensor_right, int sensor_left) {
   //delay(100);
   int sensor_right_value = analogRead(sensor_right);
@@ -206,15 +77,13 @@ int readSensor(int sensor_right, int sensor_left) {
 
   // if both sensors are on black
   if(sensor_right_value > 4000 && sensor_left_value > 4000) {
-    return motor.direction = 1; // Forward
-  } /*else if(sensor_right_value > 2000 && sensor_left_value < 2000) {
-    return motor.direction = 2; // Left
-  } else if(sensor_right_value < 2000 && sensor_left_value > 2000) {
-    return motor.direction = 3; // Right
-  }*/else if(counter_left > 100 && counter_right > 100) {
-    return motor.direction = 4; // Backwards
+    return 1;
+  } else if(sensor_right_value > 4000 && sensor_left_value < 4000) {
+    return 2;
+  } else if(sensor_right_value < 4000 && sensor_left_value > 4000) {
+    return 3;
   } else if(sensor_right_value < 4000 && sensor_left_value < 4000) {
-    return motor.direction = 1; // Forward
+    return 4;
   } else {
     return 0;
   }
@@ -224,47 +93,57 @@ int readSensor(int sensor_right, int sensor_left) {
 void loop() {
   RemoteXY_Handler ();
   // tells what the sensor is reading and what to do
-  if(set_control_mode()) {
-    calc_speeds(&motor, analogRead(sensor_right), analogRead(sensor_left));
-    switch (readSensor(sensor_right, sensor_left)){
+  if(set_control_mode())
+  {
+    switch (readSensor(sensor_right, sensor_left)) {
       case 1:
-        motor_forward(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, motor.left_speed, motor.right_speed);  
-        digitalWrite(red_lamp, HIGH); // FORWARD = RED & GREEN
+        motor_forward(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, 215, 215);
+        digitalWrite(red_lamp, HIGH);
         digitalWrite(green_lamp, HIGH);
         break;
       case 2:
-        motor_left(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, motor.left_speed, motor.right_speed);
-        digitalWrite(red_lamp, HIGH); // LEFT = RED
+        motor_left(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, 215, 215);
+        digitalWrite(red_lamp, HIGH);
         digitalWrite(green_lamp, LOW);
         break;
       case 3:
-        motor_right(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, motor.left_speed, motor.right_speed);
-        digitalWrite(red_lamp, LOW);  // RIGHT = GREEN
+        motor_right(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, 215, 215);
+        digitalWrite(red_lamp, LOW);
         digitalWrite(green_lamp, HIGH);
         break;
       case 4:
-        motor_reverse(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, motor.left_speed, motor.right_speed);
-        digitalWrite(red_lamp, LOW);  // Reverse = NEITHER
+        motor_reverse(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, 215, 215);
+        digitalWrite(red_lamp, LOW);
         digitalWrite(green_lamp, LOW);
         break;
       default:
         break;
     };
-  } else {
-      // engine right
-      int right_motor_speed = joystick(RemoteXY.joystick_1_y - RemoteXY.joystick_1_x);
-
-      // engine left
-      int left_motor_speed = joystick(RemoteXY.joystick_1_y + RemoteXY.joystick_1_x);
-
-    if (RemoteXY.joystick_1_y >= 0) {
-        motor_forward_val (Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, right_motor_speed, left_motor_speed);
-    } else if (RemoteXY.joystick_1_y < 0) {
-        motor_reverse_val(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, right_motor_speed, left_motor_speed);
-    } else {
-        motor_stop(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
-    }
   }
+  else {
+    // engine right
+    int right_motor_speed = joystick(RemoteXY.joystick_1_y - RemoteXY.joystick_1_x);
+
+
+    // engine left
+    int left_motor_speed = joystick(RemoteXY.joystick_1_y + RemoteXY.joystick_1_x);
+
+  if (RemoteXY.joystick_1_y > 0) {
+      motor_forward_val (Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, right_motor_speed, left_motor_speed);
+//  } else if (RemoteXY.joystick_1_y < 0) {
+//      left_motor_speed *= -1;
+//      motor_right_val(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, right_motor_speed, left_motor_speed);
+  } else if (RemoteXY.joystick_1_y < 0) {
+      right_motor_speed *= -1;
+      left_motor_speed *= -1;
+      motor_reverse_val(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, right_motor_speed, left_motor_speed);
+//  } else if (right_motor_speed < 0 && left_motor_speed > 0) {
+//      right_motor_speed *= -1;
+//      motor_left_val(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, right_motor_speed, left_motor_speed);
+  } else {
+      motor_stop(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
+  }
+}
 }
 
 int set_control_mode() {
@@ -277,12 +156,12 @@ int set_control_mode() {
 }
 
 int joystick (int xy) {
-  if(xy>100) xy=100;
-  if(xy<-100) xy=-100;
+  if(xy>200) xy=200;
+  if(xy<-200) xy=-200;
  
   if(xy == 0) xy=0;
 
-  if(xy>0) xy=(int)map(xy,0,100,175,255);
-  if(xy<0) xy=(int)map(xy,-100,0,255,175);
+  if(xy>0) xy=(int)map(xy,0,200,170,255);
+  if(xy<0) xy=(int)map(xy,-200,0,-255,-170);
   return xy;
 }
