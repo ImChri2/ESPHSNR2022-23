@@ -1,0 +1,9 @@
+Die oben gezeigte C++-Code-Datei enthält verschiedene Bibliotheken und Funktionen, die für die Verwendung des ESP32-Cores und der BLE-Funktionalität erforderlich sind.
+
+Zunächst werden die Bibliotheken Arduino.h, MotorControl.hpp und Autopilot.cpp eingebunden. Die Arduino.h-Bibliothek enthält die grundlegenden Funktionen und Konstanten für die Arduino-Plattform, während MotorControl.hpp und Autopilot.cpp für die Steuerung der Motoren und den Autopilot-Modus des ESP32-Cores verantwortlich sind.
+
+Anschließend wird die Bibliothek RemoteXY eingebunden, die die Verwendung von BLE für die Verbindung mit einer RemoteXY-App ermöglicht. Die Konfigurationsoption REMOTEXY_MODE__ESP32CORE_BLE wird festgelegt, um anzugeben, dass der ESP32-Core und BLE verwendet werden sollen. Die Konfigurationsoptionen REMOTEXY_BLUETOOTH_NAME und REMOTEXY_ACCESS_PASSWORD werden verwendet, um den Namen des Bluetooth-Geräts und das Zugangskennwort festzulegen.
+
+Danach wird die RemoteXY_CONF-Struktur definiert, die alle Variablen und Ereignisse der Steuerungs-Schnittstelle enthält. Diese Struktur enthält Eingangs- und Ausgangsvariablen, die von der RemoteXY-App verwendet werden, um die Steuerung des ESP32-Cores zu ermöglichen.
+
+Im setup()-Teil des Codes werden die Pins für die verschiedenen Komponenten des ESP32-Cores festgelegt, die RemoteXY-Schnittstelle initialisiert und die serielle Verbindung gestartet. Die loop()-Funktion enthält den Hauptcode, der die Eingangs- und Ausgangsvariablen der RemoteXY-Schnittstelle verwendet, um die Motoren und den Autopilot-Modus zu steuern. Die Funktion readSensor() wird verwendet, um die Werte der Sensoren zu lesen und zu verarbeiten, um die Bewegung des ESP32-Cores zu steuern.
