@@ -68,7 +68,7 @@ int red_lamp = 6;
 int green_lamp = 7;
 
 Servo servo;
-int servo_val;
+int servo_val = 0;
 
 void setup() {
   RemoteXY_Init ();
@@ -280,7 +280,7 @@ void loop() {
 // 2070 =  90°
 // 4095 =  165°
 
-int control_servo() {
+void control_servo() {
   // Open Servo
   if (RemoteXY.pushSwitch_2 == 1 && servo_val == 0) {
     servo_val = 1;
