@@ -47,7 +47,7 @@ struct motor_t {
   unsigned left_speed; // 0-255
   unsigned right_speed; // 0-255
 };
-motor_t motor;
+struct motor_t motor;
 #pragma pack(pop)
 
 #define PIN_PUSHSWITCH_1 10
@@ -126,25 +126,51 @@ void calc_speeds(motor_t * motor, int right, int left) {
   
   Serial.printf("Counter Left: %d\n", counter_left);
   Serial.printf("Counter Right: %d\n", counter_right);
-
-  // if(counter_right > 1) {
-  //   right_motor_speed = 255;
-  //   //left_motor_speed = 240;
-  //   left_motor_speed = map(counter_left,0,40,250,195);
-  // } else if(counter_left > 1) {
-  //   //right_motor_speed = 240;
-  //   left_motor_speed = 255;
-  //   right_motor_speed = map(counter_right,0,40,250,195);
-  // } else {
-  //   right_motor_speed = 255;
-  //   left_motor_speed = 255;
-  // }
-
+  
+  
+    
+  /*if(counter_right > 1) {
+    right_motor_speed = 240;
+    left_motor_speed = 200;
+  } else if(counter_right > 5) {
+    right_motor_speed = 255;
+    left_motor_speed = 180;
+   } else if(counter_right > 10) {
+    right_motor_speed = 240;
+    left_motor_speed = 170;
+    } else if(counter_left > 1) {
+    left_motor_speed = 240;
+    right_motor_speed = 200;
+   } else if(counter_left > 5) {
+    left_motor_speed = 240;
+    right_motor_speed = 180;
+   } else if(counter_left > 10) {
+    left_motor_speed = 240;
+    right_motor_speed = 170;
+   } else {
+    right_motor_speed = 240;
+    left_motor_speed = 240;
+  }*/
+  
   if(right > 4000 || left > 4000) {
+    right_motor_speed = right > 4000 ? 250 : right_motor_speed;
+    left_motor_speed = left > 4000 ? 250 : left_motor_speed;
+  }
+  if(right < 4000 || left < 4000) {
+    right_motor_speed = left < 4000 ? 180 : right_motor_speed;
+    left_motor_speed = right < 4000 ? 180 : left_motor_speed;
+    /*if(counter_left > counter_right) {
+      right_motor_speed = 190;
+    } else if(counter_right > counter_left) {
+      left_motor_speed = 190;
+    }*/
+  }
+  
+  /*if(right > 4000 || left > 4000) {
     right_motor_speed = right > 4000 ? 240 : right_motor_speed;
     left_motor_speed = left > 4000 ? 240 : left_motor_speed;
   }
-  if(right > 3000 || left > 3000) {
+  if(right < 3000 || left > 3000) {
     right_motor_speed = right > 3000 ? 245 : right_motor_speed;
     left_motor_speed = left > 3000 ? 245 : left_motor_speed;
   }
@@ -155,13 +181,13 @@ void calc_speeds(motor_t * motor, int right, int left) {
   if(right > 1000 || left > 1000) {
     right_motor_speed = right > 1000 ? 255 : right_motor_speed;
     left_motor_speed = left > 1000 ? 255 : left_motor_speed;
-  }
+  }*/
   /*TIme idea testing
   if(right < 900 || left < 900) {
     right < 900 ? right_time_since_last_black_contact++ : right_time_since_last_black_contact == 0;
     left < 900 ? left_time_since_last_black_contact++ : left_time_since_last_black_contact == 0;
   }*/
-  if(right > 1000 || left > 1000) {
+  /*if(right > 1000 || left > 1000) {
     right_motor_speed = right > 1000 ? 255 : right_motor_speed;
     left_motor_speed = left > 1000 ? 255 : left_motor_speed;
   }
@@ -172,7 +198,7 @@ void calc_speeds(motor_t * motor, int right, int left) {
   if(right > 220 || left > 220) {
     right_motor_speed = right > 200 ? 200 : right_motor_speed;
     left_motor_speed = left > 200 ? 200 : left_motor_speed;
-  }
+  }*/
 
   // Return the motor speeds
   motor->left_speed = left_motor_speed;
@@ -189,12 +215,14 @@ int readSensor(int sensor_right, int sensor_left) {
   // if both sensors are on black
   if(sensor_right_value > 4000 && sensor_left_value > 4000) {
     return motor.direction = 1; // Forward
-  } else if(sensor_right_value > 2000 && sensor_left_value < 2000) {
+  } /*else if(sensor_right_value > 2000 && sensor_left_value < 2000) {
     return motor.direction = 2; // Left
   } else if(sensor_right_value < 2000 && sensor_left_value > 2000) {
     return motor.direction = 3; // Right
-  } else if(sensor_right_value < 1000 && sensor_left_value < 1000) {
-    return motor.direction = 4; // Backward
+  }*/else if(counter_left > 100 && counter_right > 100) {
+    return motor.direction = 4; // Backwards
+  } else if(sensor_right_value < 4000 || sensor_left_value < 4000) {
+    return motor.direction = 1; // Forward
   } else {
     return 0;
   }
@@ -206,7 +234,7 @@ void loop() {
   // tells what the sensor is reading and what to do
   if(set_control_mode()) {
     calc_speeds(&motor, analogRead(sensor_right), analogRead(sensor_left));
-    switch (readSensor(sensor_right, sensor_left)) {
+    switch (readSensor(sensor_right, sensor_left)){
       case 1:
         motor_forward(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, motor.left_speed, motor.right_speed);  
         digitalWrite(red_lamp, HIGH); // FORWARD = RED & GREEN
