@@ -59,7 +59,7 @@ int Motor_rechts_A = 1;
 int Motor_rechts_B = 0;
 int sensor_right = 5;
 int sensor_left = 4;
-int servo_ctrl = 19; // GPIO19
+int servo_pin = 19; // GPIO19
 bool autopilot = false;
 int counter_left = 0;
 int counter_right = 0;
@@ -81,7 +81,7 @@ void setup() {
   pinMode (PIN_SWITCH_2, OUTPUT);
   
   servo.setPeriodHertz(50); // standard 50 hz servo
-  servo.attach(servo_ctrl); // attaches the servo on pin 19 to the servo object
+  servo.attach(servo_pin); // attaches the servo on pin 19 to the servo object
 
   set_pins(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
 }
@@ -231,6 +231,7 @@ int readSensor(int sensor_right, int sensor_left) {
 
 void loop() {
   RemoteXY_Handler ();
+  control_servo();
   // tells what the sensor is reading and what to do
   if(set_control_mode()) {
     calc_speeds(&motor, analogRead(sensor_right), analogRead(sensor_left));
@@ -281,11 +282,13 @@ void loop() {
 
 int control_servo() {
   // Open Servo
-  if (RemoteXY.pushSwitch_2 == 1) {
+  if (RemoteXY.pushSwitch_2 == 1 && servo_val == 0) {
+    servo_val = 1;
     servo.write(2070);
   }
   // Close Servo
-  else {
+  if (RemoteXY.pushSwitch_2 == 0 && servo_val == 1) {
+    servo_val = 0;
     servo.write(275);
   }
 }
