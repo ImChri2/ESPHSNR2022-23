@@ -5,6 +5,7 @@
 #include <BLEDevice.h>
 #include <RemoteXY.h>
 #include <time.h>
+#include <ESP32Servo.h>
 //#include "../lib/QTRSensor/QTRSensors.h"
 // RemoteXY connection settings
 #define REMOTEXY_BLUETOOTH_NAME "Ball-E connect"
@@ -58,12 +59,16 @@ int Motor_rechts_A = 1;
 int Motor_rechts_B = 0;
 int sensor_right = 5;
 int sensor_left = 4;
+int servo_ctrl = 19; // GPIO19
 bool autopilot = false;
 int counter_left = 0;
 int counter_right = 0;
 
 int red_lamp = 6;
 int green_lamp = 7;
+
+Servo servo;
+int servo_val;
 
 void setup() {
   RemoteXY_Init ();
@@ -75,6 +80,8 @@ void setup() {
   pinMode (PIN_PUSHSWITCH_1, OUTPUT);
   pinMode (PIN_SWITCH_2, OUTPUT);
   
+  servo.setPeriodHertz(50); // standard 50 hz servo
+  servo.attach(servo_ctrl); // attaches the servo on pin 19 to the servo object
 
   set_pins(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
 }
@@ -237,6 +244,21 @@ void loop() {
     } else {
         motor_stop(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
     }
+  }
+}
+
+// 275  =  15°
+// 2070 =  90°
+// 4095 =  165°
+
+int control_servo() {
+  // Open Servo
+  if (RemoteXY.pushSwitch_2 == 1) {
+    servo.write(2070);
+  }
+  // Close Servo
+  else {
+    servo.write(275);
   }
 }
 
