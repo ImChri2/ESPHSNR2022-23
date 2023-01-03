@@ -3,6 +3,10 @@
 		{
 			"name": "ESP32",
 			"path": "."
+		},
+		{
+			"name": "ESP",
+			"path": "../../../Documents/PlatformIO/Projects/ESP"
 		}
 	],
 	"settings": {}

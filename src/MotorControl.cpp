@@ -11,34 +11,34 @@ void motor_stop(int left_a, int left_b, int right_a, int right_b) {
 }
 
 // Bewege den Roboter nach links
-void motor_left(int left_a, int left_b, int right_a, int right_b) {
+void motor_left(int left_a, int left_b, int right_a, int right_b, int velocity_left, int velocity_right) {
   analogWrite(left_a, LOW);
-  analogWrite(left_b, velocity);
+  analogWrite(left_b, velocity_left);
   analogWrite(right_a, LOW);
-  analogWrite(right_b, velocity);
+  analogWrite(right_b, velocity_right);
 }
 
 // Bewege den Roboter nach rechts
-void motor_right(int left_a, int left_b, int right_a, int right_b) {
-  analogWrite(left_a, velocity);
+void motor_right(int left_a, int left_b, int right_a, int right_b, int velocity_left, int velocity_right) {
+  analogWrite(left_a, velocity_left);
   analogWrite(left_b, LOW);
-  analogWrite(right_a, velocity);
+  analogWrite(right_a, velocity_right);
   analogWrite(right_b, LOW);
 }
 
 // Bewege den Roboter nach vorne
-void motor_forward(int left_a, int left_b, int right_a, int right_b) {
-  analogWrite(left_a, velocity);            //LEFT_motor takes reverse inputs
+void motor_forward(int left_a, int left_b, int right_a, int right_b, int velocity_left, int velocity_right) {
+  analogWrite(left_a, velocity_left);            //LEFT_motor takes reverse inputs
   analogWrite(left_b, LOW);                 //Truth table flipped for left_a/b
   analogWrite(right_a, LOW);
-  analogWrite(right_b, velocity);
+  analogWrite(right_b, velocity_right);
 }
 
 // Bewege den Roboter rückwarts
-void motor_reverse(int left_a, int left_b, int right_a, int right_b) {
+void motor_reverse(int left_a, int left_b, int right_a, int right_b, int velocity_left, int velocity_right) {
   analogWrite(left_a, LOW);            //LEFT_motor takes reverse inputs
-  analogWrite(left_b, velocity);                 //Truth table flipped for left_a/b
-  analogWrite(right_a, velocity);
+  analogWrite(left_b, velocity_left);                 //Truth table flipped for left_a/b
+  analogWrite(right_a, velocity_right);
   analogWrite(right_b, LOW);
 }
 

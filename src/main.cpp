@@ -7,6 +7,7 @@
 #include <BLEDevice.h>
 #include <RemoteXY.h>
 #include "../lib/QTRSensor/QTRSensors.h"
+#include <ESP32Servo.h>
 // RemoteXY connection settings
 #define REMOTEXY_BLUETOOTH_NAME "Ball-E connect"
 #define REMOTEXY_ACCESS_PASSWORD "#DasBesteEsp2022!"
@@ -23,6 +24,8 @@ uint8_t RemoteXY_CONF[] =   // 96 bytes
 int joystick (int xy);
 int set_control_mode();
 
+Servo servo;
+int servo_val = 0;
 
 // this structure defines all the variables and events of your control interface
 struct {
@@ -49,6 +52,7 @@ int Motor_links_A = 3;
 int Motor_links_B = 2;
 int Motor_rechts_A = 1;
 int Motor_rechts_B = 0;
+int servo_pin = 19;
 int sensor_right = 5;
 int sensor_left = 4;
 bool autopilot = false;
@@ -65,7 +69,9 @@ void setup() {
 
   pinMode (PIN_PUSHSWITCH_1, OUTPUT);
   pinMode (PIN_SWITCH_2, OUTPUT);
-  
+
+  servo.setPeriodHertz(50); // standard 50 hz servo
+  servo.attach(servo_pin); // attaches the servo on pin 19 to the servo object
 
   set_pins(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
 }
@@ -95,6 +101,7 @@ int readSensor(int sensor_right, int sensor_left) {
 void loop() {
   RemoteXY_Handler ();
   // tells what the sensor is reading and what to do
+  control_servo();
   if(set_control_mode()) {
     switch (readSensor(sensor_right, sensor_left)) {
       case 1:
@@ -134,6 +141,23 @@ void loop() {
     } else {
         motor_stop(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
     }
+  }
+}
+
+// 275  =  15°
+// 2070 =  90°
+// 4095 =  165°
+
+void control_servo() {
+  // Open Servo
+  if (RemoteXY.pushSwitch_2 == 1 && servo_val == 0) {
+    servo_val = 1;
+    servo.write(2070);
+  }
+  // Close Servo
+  if (RemoteXY.pushSwitch_2 == 0 && servo_val == 1) {
+    servo_val = 0;
+    servo.write(275);
   }
 }
 
