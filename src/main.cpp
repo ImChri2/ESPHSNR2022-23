@@ -1,7 +1,5 @@
 #include <Arduino.h>
 #include "MotorControl.hpp"
-#include "Autopilot.cpp"
-
 
 #define REMOTEXY_MODE__ESP32CORE_BLE
 #include <BLEDevice.h>
@@ -11,6 +9,7 @@
 // RemoteXY connection settings
 #define REMOTEXY_BLUETOOTH_NAME "Ball-E connect"
 #define REMOTEXY_ACCESS_PASSWORD "#DasBesteEsp2022!"
+
 // RemoteXY configurate
 #pragma pack(push, 1)
 uint8_t RemoteXY_CONF[] =   // 96 bytes
@@ -48,13 +47,15 @@ struct {
 #define PIN_PUSHSWITCH_1 10
 #define PIN_SWITCH_2 9
 //initialize the motor control and sensor
-int Motor_links_A = 3;
-int Motor_links_B = 2;
-int Motor_rechts_A = 1;
-int Motor_rechts_B = 0;
-int servo_pin = 19;
-int sensor_right = 5;
-int sensor_left = 4;
+enum{
+  servo_pin = 19
+  Motor_links_A = 3
+  Motor_links_B = 2
+  Motor_rechts_A = 1
+  Motor_rechts_B = 0
+  sensor_right = 5
+  sensor_left = 4
+};
 bool autopilot = false;
 
 int red_lamp = 6;
