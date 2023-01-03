@@ -48,13 +48,13 @@ struct {
 #define PIN_SWITCH_2 9
 //initialize the motor control and sensor
 enum{
-  servo_pin = 19
-  Motor_links_A = 3
-  Motor_links_B = 2
-  Motor_rechts_A = 1
-  Motor_rechts_B = 0
-  sensor_right = 5
-  sensor_left = 4
+  servo_pin = 19,
+  Motor_links_A = 3,
+  Motor_links_B = 2,
+  Motor_rechts_A = 1,
+  Motor_rechts_B = 0,
+  sensor_right = 5,
+  sensor_left = 4,
 };
 bool autopilot = false;
 
@@ -98,53 +98,6 @@ int readSensor(int sensor_right, int sensor_left) {
   }
 }
 
-
-void loop() {
-  RemoteXY_Handler ();
-  // tells what the sensor is reading and what to do
-  control_servo();
-  if(set_control_mode()) {
-    switch (readSensor(sensor_right, sensor_left)) {
-      case 1:
-        motor_forward(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);  
-        digitalWrite(red_lamp, HIGH); // FORWARD = RED & GREEN
-        digitalWrite(green_lamp, HIGH);
-        break;
-      case 2:
-        motor_left(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
-        digitalWrite(red_lamp, HIGH); // LEFT = RED
-        digitalWrite(green_lamp, LOW);
-        break;
-      case 3:
-        motor_right(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
-        digitalWrite(red_lamp, LOW);  // RIGHT = GREEN
-        digitalWrite(green_lamp, HIGH);
-        break;
-      case 4:
-        motor_reverse(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
-        digitalWrite(red_lamp, LOW);  // Reverse = NEITHER
-        digitalWrite(green_lamp, LOW);
-        break;
-      default:
-        break;
-    };
-  } else {
-      // engine right
-      int right_motor_speed = joystick(RemoteXY.joystick_1_y, RemoteXY.joystick_1_x);
-
-      // engine left
-      int left_motor_speed = joystick(RemoteXY.joystick_1_y, RemoteXY.joystick_1_x);
-
-    if (RemoteXY.joystick_1_y >= 0) {
-        motor_forward_val (Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, right_motor_speed, left_motor_speed);
-    } else if (RemoteXY.joystick_1_y < 0) {
-        motor_reverse_val(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, right_motor_speed, left_motor_speed);
-    } else {
-        motor_stop(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
-    }
-  }
-}
-
 // 275  =  15°
 // 2070 =  90°
 // 4095 =  165°
@@ -171,9 +124,59 @@ int set_control_mode() {
   return autopilot;
 }
 
-int joystick (int y, int x) {
-  int xy = sqrt(x*x+y*y);
-  if(xy>0) xy=(int)map(xy,0,141,175,255);
-  //if(xy<0) xy=(int)map(xy,141,0,255,175);
+int joystick (int xy) {
+  if(xy>100) xy=100;
+  if(xy<-100) xy=-100;
+ 
+  if(xy == 0) xy=0;
+
+  if(xy>0) xy=(int)map(xy,0,100,175,255);
+  if(xy<0) xy=(int)map(xy,-100,0,255,175);
   return xy;
+}
+
+void loop() {
+  RemoteXY_Handler ();
+  // tells what the sensor is reading and what to do
+  control_servo();
+  if(set_control_mode()) {
+    switch (readSensor(sensor_right, sensor_left)) {
+      case 1:
+        motor_forward(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, 215, 215);  
+        digitalWrite(red_lamp, HIGH); // FORWARD = RED & GREEN
+        digitalWrite(green_lamp, HIGH);
+        break;
+      case 2:
+        motor_left(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, 215, 215);
+        digitalWrite(red_lamp, HIGH); // LEFT = RED
+        digitalWrite(green_lamp, LOW);
+        break;
+      case 3:
+        motor_right(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, 215, 215);
+        digitalWrite(red_lamp, LOW);  // RIGHT = GREEN
+        digitalWrite(green_lamp, HIGH);
+        break;
+      case 4:
+        motor_reverse(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, 215, 215);
+        digitalWrite(red_lamp, LOW);  // Reverse = NEITHER
+        digitalWrite(green_lamp, LOW);
+        break;
+      default:
+        break;
+    };
+  } else {
+      // engine right
+      int right_motor_speed = joystick(RemoteXY.joystick_1_y - RemoteXY.joystick_1_x);
+
+      // engine left
+      int left_motor_speed = joystick(RemoteXY.joystick_1_y + RemoteXY.joystick_1_x);
+
+    if (RemoteXY.joystick_1_y >= 0) {
+        motor_forward_val (Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, right_motor_speed, left_motor_speed);
+    } else if (RemoteXY.joystick_1_y < 0) {
+        motor_reverse_val(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B, right_motor_speed, left_motor_speed);
+    } else {
+        motor_stop(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
+    }
+  }
 }
