@@ -9,6 +9,7 @@
 // RemoteXY connection settings
 #define REMOTEXY_BLUETOOTH_NAME "Ball-E connect"
 #define REMOTEXY_ACCESS_PASSWORD "#DasBesteEsp2022!"
+
 // RemoteXY configurate
 #pragma pack(push, 1)
 uint8_t RemoteXY_CONF[] =   // 94 bytes
