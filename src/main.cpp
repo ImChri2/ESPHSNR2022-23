@@ -12,12 +12,12 @@
 
 // RemoteXY configurate
 #pragma pack(push, 1)
-uint8_t RemoteXY_CONF[] =   // 94 bytes
-  { 255,4,0,0,0,87,0,16,26,1,10,48,40,72,15,15,4,26,31,79,
-  78,0,31,79,70,70,0,2,0,7,74,22,11,190,26,31,31,79,80,69,
+uint8_t RemoteXY_CONF[] =   // 92 bytes
+  { 255,4,0,0,0,85,0,16,26,1,10,48,40,76,15,15,4,26,31,79,
+  78,0,31,79,70,70,0,2,0,8,78,22,11,190,26,31,31,79,80,69,
   78,0,67,76,79,83,69,0,5,32,7,10,50,50,190,26,31,129,0,8,
-  69,21,4,190,66,97,108,108,32,109,111,117,110,116,0,129,0,37,67,22,
-  4,189,70,111,108,108,111,119,32,76,105,110,101,0 };
+  69,21,4,190,66,97,108,108,32,109,111,117,110,116,0,129,0,39,69,17,
+  4,190,65,117,116,111,112,105,108,111,116,0 };
 
 // this structure defines all the variables and events of your control interface 
 struct {
@@ -81,13 +81,13 @@ int readSensor(int sensor_right, int sensor_left) {
   Serial.println(sensor_left_value);
 
   // if both sensors are on black
-  if(sensor_right_value > 1000 && sensor_left_value > 1000) {
+  if(sensor_right_value > 4000 && sensor_left_value > 4000) {
     return 1;
-  } else if(sensor_right_value > 1000 && sensor_left_value < 1000) {
+  } else if(sensor_right_value > 4000 && sensor_left_value < 4000) {
     return 2;
-  } else if(sensor_right_value < 1000 && sensor_left_value > 1000) {
+  } else if(sensor_right_value < 4000 && sensor_left_value > 4000) {
     return 3;
-  } else if(sensor_right_value < 1000 && sensor_left_value < 1000) {
+  } else if(sensor_right_value < 4000 && sensor_left_value < 4000) {
     return 4;
   } else {
     return 0;
