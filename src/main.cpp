@@ -52,6 +52,7 @@ int Motor_links_A = 3;
 int Motor_links_B = 2;
 int Motor_rechts_A = 1;
 int Motor_rechts_B = 0;
+int servo_pin = 19;
 int sensor_right = 5;
 int sensor_left = 4;
 bool autopilot = false;
