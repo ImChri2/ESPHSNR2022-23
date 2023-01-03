@@ -81,13 +81,13 @@ int readSensor(int sensor_right, int sensor_left) {
   Serial.println(sensor_left_value);
 
   // if both sensors are on black
-  if(sensor_right_value > 1000 && sensor_left_value > 1000) {
+  if(sensor_right_value > 4000 && sensor_left_value > 4000) {
     return 1;
-  } else if(sensor_right_value > 1000 && sensor_left_value < 1000) {
+  } else if(sensor_right_value > 4000 && sensor_left_value < 4000) {
     return 2;
-  } else if(sensor_right_value < 1000 && sensor_left_value > 1000) {
+  } else if(sensor_right_value < 4000 && sensor_left_value > 4000) {
     return 3;
-  } else if(sensor_right_value < 1000 && sensor_left_value < 1000) {
+  } else if(sensor_right_value < 4000 && sensor_left_value < 4000) {
     return 4;
   } else {
     return 0;
