@@ -12,31 +12,21 @@
 
 // RemoteXY configurate
 #pragma pack(push, 1)
-uint8_t RemoteXY_CONF[] =   // 96 bytes
-  { 255,5,0,11,0,89,0,16,29,1,2,1,3,71,29,11,2,26,31,31,
-  83,101,110,115,111,114,0,80,104,111,110,101,0,67,4,3,62,55,5,2,
-  26,11,5,32,4,4,55,55,2,26,31,10,48,38,74,19,19,4,36,8,
-  32,71,79,32,0,24,83,84,79,80,0,2,1,3,89,29,7,2,26,31,
-  31,77,111,116,46,79,78,0,77,111,116,46,79,70,70,0 };
+uint8_t RemoteXY_CONF[] =   // 94 bytes
+  { 255,4,0,0,0,87,0,16,26,1,10,48,40,72,15,15,4,26,31,79,
+  78,0,31,79,70,70,0,2,0,7,74,22,11,190,26,31,31,79,80,69,
+  78,0,67,76,79,83,69,0,5,32,7,10,50,50,190,26,31,129,0,8,
+  69,21,4,190,66,97,108,108,32,109,111,117,110,116,0,129,0,37,67,22,
+  4,189,70,111,108,108,111,119,32,76,105,110,101,0 };
 
-
-int joystick (int xy);
-int set_control_mode();
-
-Servo servo;
-int servo_val = 0;
-
-// this structure defines all the variables and events of your control interface
+// this structure defines all the variables and events of your control interface 
 struct {
+
     // input variables
+  uint8_t pushSwitch_1; // =1 if state is ON, else =0 
   uint8_t switch_1; // =1 if switch ON and =0 if OFF 
   int8_t joystick_1_x; // from -100 to 100  
   int8_t joystick_1_y; // from -100 to 100  
-  uint8_t pushSwitch_1; // =1 if state is ON, else =0 
-  uint8_t switch_2; // =1 if switch ON and =0 if OFF 
-
-    // output variables
-  char text_1[11];  // string UTF8 end zero 
 
     // other variable
   uint8_t connect_flag;  // =1 if wire connected, else =0 
@@ -44,8 +34,6 @@ struct {
 } RemoteXY;
 #pragma pack(pop)
 
-#define PIN_PUSHSWITCH_1 10
-#define PIN_SWITCH_2 9
 //initialize the motor control and sensor
 enum{
   servo_pin = 19,
@@ -55,11 +43,19 @@ enum{
   Motor_rechts_B = 0,
   sensor_right = 5,
   sensor_left = 4,
+  PIN_PUSHSWITCH_1 = 8,
 };
 bool autopilot = false;
 
 int red_lamp = 6;
 int green_lamp = 7;
+
+int joystick (int xy);
+int set_control_mode();
+void control_servo();
+
+Servo servo;
+int servo_val = 0;
 
 void setup() {
   RemoteXY_Init ();
@@ -68,8 +64,8 @@ void setup() {
   pinMode(red_lamp, OUTPUT);
   pinMode(green_lamp, OUTPUT);
 
-  pinMode (PIN_PUSHSWITCH_1, OUTPUT);
-  pinMode (PIN_SWITCH_2, OUTPUT);
+  pinMode (servo_pin, OUTPUT);
+  //pinMode (PIN_SWITCH_2, OUTPUT);
 
   servo.setPeriodHertz(50); // standard 50 hz servo
   servo.attach(servo_pin); // attaches the servo on pin 19 to the servo object
@@ -96,43 +92,6 @@ int readSensor(int sensor_right, int sensor_left) {
   } else {
     return 0;
   }
-}
-
-// 275  =  15°
-// 2070 =  90°
-// 4095 =  165°
-
-void control_servo() {
-  // Open Servo
-  if (RemoteXY.pushSwitch_2 == 1 && servo_val == 0) {
-    servo_val = 1;
-    servo.write(2070);
-  }
-  // Close Servo
-  if (RemoteXY.pushSwitch_2 == 0 && servo_val == 1) {
-    servo_val = 0;
-    servo.write(275);
-  }
-}
-
-int set_control_mode() {
-  if (RemoteXY.pushSwitch_1 == 1) {
-    autopilot = true;
-  } else {
-    autopilot = false;
-  }
-  return autopilot;
-}
-
-int joystick (int xy) {
-  if(xy>100) xy=100;
-  if(xy<-100) xy=-100;
- 
-  if(xy == 0) xy=0;
-
-  if(xy>0) xy=(int)map(xy,0,100,175,255);
-  if(xy<0) xy=(int)map(xy,-100,0,255,175);
-  return xy;
 }
 
 void loop() {
@@ -178,5 +137,42 @@ void loop() {
     } else {
         motor_stop(Motor_links_A, Motor_links_B, Motor_rechts_A, Motor_rechts_B);
     }
+  }
+}
+
+int set_control_mode() {
+  if (RemoteXY.pushSwitch_1 == 1) {
+    autopilot = true;
+  } else {
+    autopilot = false;
+  }
+  return autopilot;
+}
+
+int joystick (int xy) {
+  if(xy>100) xy=100;
+  if(xy<-100) xy=-100;
+ 
+  if(xy == 0) xy=0;
+
+  if(xy>0) xy=(int)map(xy,0,100,175,255);
+  if(xy<0) xy=(int)map(xy,-100,0,255,175);
+  return xy;
+}
+// 275  =  15°
+// 2070 =  90°
+// 4095 =  165°
+void control_servo() {
+  // Open Servo
+  if (RemoteXY.switch_1 == 1 && servo_val == 0) {
+    servo_val = 1;
+    Serial.printf("Servo: %d\n", servo_val);
+    servo.write(40);
+  }
+  // Close Servo
+  if (RemoteXY.switch_1 == 0 && servo_val == 1) {
+    servo_val = 0;
+    Serial.printf("Servo: %d\n", servo_val);
+    servo.write(165);
   }
 }
