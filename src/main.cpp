@@ -167,7 +167,7 @@ void control_servo() {
   if (RemoteXY.switch_1 == 1 && servo_val == 0) {
     servo_val = 1;
     Serial.printf("Servo: %d\n", servo_val);
-    servo.write(40);
+    servo.write(50);
   }
   // Close Servo
   if (RemoteXY.switch_1 == 0 && servo_val == 1) {
