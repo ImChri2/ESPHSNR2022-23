@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include <Struct.hpp>
 #include <ESP32Servo.h>
+#include <BLEDevice.h>
+#include <RemoteXY.h>
 
 extern Servo servo;
 
